@@ -23,39 +23,6 @@ module Hyperwave
       end
     end
 
-    def print_once(tag, desc)
-      return unless top_level?
-      msg = ColorizedString.new("[#{tag}]").blue + " #{desc}"
-      barrier.puts(msg)
-    end
-
-    def report(status, extra = nil)
-      return unless top_level?
-
-      msg = case status
-      when :ok
-        ColorizedString.new("ok").green
-      when :changed
-        ColorizedString.new("ok").yellow
-      when :error
-        ColorizedString.new("error").red
-      end
-
-      msg += " - #{extra}" if extra
-
-      printf "  %-16s : %s\n" % [@host, msg]
-    end
-
-    def sync(&block)
-      stack_incr
-      begin
-        block.call
-      ensure
-        barrier.wait if top_level?
-        stack_decr
-      end
-    end
-
     DEFAULT_COMMAND_OPTIONS = {
       sh: "/bin/sh",
       change: true
@@ -64,7 +31,7 @@ module Hyperwave
     def run_standard_command(name, options, &block)
       options = DEFAULT_COMMAND_OPTIONS.merge(options)
 
-      sync do
+      start_top_level_command do
         print_once(name, options[:desc])
 
         if guarded?(options)
@@ -103,6 +70,38 @@ module Hyperwave
 
     def top_level?
       stack == 1
+    end
+
+    def start_top_level_command(&block)
+      stack_incr
+      begin
+        block.call
+      ensure
+        barrier.wait if top_level?
+        stack_decr
+      end
+    end
+
+    def print_once(tag, desc)
+      return unless top_level?
+      msg = ColorizedString.new("[#{tag}]").blue + " #{desc}"
+      barrier.puts(msg)
+    end
+
+    def report(status, extra = nil)
+      return unless top_level?
+
+      msg = case status
+      when :ok
+        ColorizedString.new("ok").green
+      when :changed
+        ColorizedString.new("ok").yellow
+      when :error
+        ColorizedString.new("error").red
+      end
+      msg += " - #{extra}" if extra
+
+      printf "  %-16s : %s\n" % [@host, msg]
     end
 
     # Returns true if guard should prevent execution of command.
