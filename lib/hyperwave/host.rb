@@ -51,7 +51,7 @@ module Hyperwave
       begin
         block.call
       ensure
-        (barrier.done; barrier.wait) if top_level?
+        barrier.wait if top_level?
         stack_decr
       end
     end

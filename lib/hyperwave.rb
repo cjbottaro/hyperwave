@@ -22,16 +22,11 @@ class Barrier
     end
   end
 
-  def done
+  def wait
     @lock.synchronize do
       @count += 1
       @count = 0 if @count == @size
       @cond.broadcast
-    end
-  end
-
-  def wait
-    @lock.synchronize do
       @cond.wait(@lock) while @count > 0
     end
   end
