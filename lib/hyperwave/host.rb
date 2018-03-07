@@ -1,5 +1,6 @@
 require "net/ssh"
 require "colorized_string"
+require "hyperwave/host/manager"
 require "hyperwave/module/shell"
 require "hyperwave/module/file"
 
@@ -9,18 +10,22 @@ module Hyperwave
     include Hyperwave::Module::Shell
     include Hyperwave::Module::File
 
-    attr_reader :ssh, :barrier
+    attr_reader :ssh, :run
 
-    def initialize(host, barrier)
-      @host = host
-      @barrier = barrier
+    def self.fetch(host)
+      Manager.fetch(host)
     end
 
-    def call(&block)
-      Net::SSH.start(@host, "root") do |ssh|
-        @ssh = ssh
-        block.call(self)
-      end
+    def initialize(host)
+      @host = host
+    end
+
+    def start_run(run, &block)
+      @run = run
+      ensure_clean_ssh_connection
+      block.call(self)
+    ensure
+      @run = nil
     end
 
     DEFAULT_COMMAND_OPTIONS = {
@@ -72,12 +77,17 @@ module Hyperwave
       stack == 1
     end
 
+    def ensure_clean_ssh_connection
+      @ssh = Net::SSH.start(@host, "root") if !@ssh || @ssh.closed?
+      @ssh.channels.each{ |ch| @ssh.cleanup_channl(ch) }
+    end
+
     def start_top_level_command(&block)
       stack_incr
       begin
         block.call
       ensure
-        barrier.wait if top_level?
+        run.wait if top_level?
         stack_decr
       end
     end
@@ -85,7 +95,7 @@ module Hyperwave
     def print_once(tag, desc)
       return unless top_level?
       msg = ColorizedString.new("[#{tag}]").blue + " #{desc}"
-      barrier.puts(msg)
+      run.print_once(msg)
     end
 
     def report(status, extra = nil)
