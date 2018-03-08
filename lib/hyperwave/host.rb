@@ -1,14 +1,14 @@
 require "net/ssh"
 require "colorized_string"
 require "hyperwave/host/manager"
-require "hyperwave/module/shell"
-require "hyperwave/module/file"
+require "hyperwave/plugin/shell"
+require "hyperwave/plugin/file"
 
 module Hyperwave
   class Host
 
-    include Hyperwave::Module::Shell
-    include Hyperwave::Module::File
+    include Plugin::Shell
+    include Plugin::File
 
     attr_reader :ssh, :run
 
@@ -49,7 +49,7 @@ module Hyperwave
         if result.failure?
           report(:error, result.stderr)
         elsif options[:change]
-          report(:change)
+          report(:changed)
         else
           report(:ok)
         end

@@ -2,9 +2,12 @@ module Hyperwave
   class Result
     attr_accessor :stdout, :stderr, :code, :signal, :error
 
-    def initialize
-      @stdout = ""
-      @stderr = ""
+    def initialize(attrs = {})
+      @code   = attrs[:code]   || 0
+      @stdout = attrs[:stdout] || ""
+      @stderr = attrs[:stderr] || ""
+      @signal = attrs[:signal]
+      @error  = attrs[:error]
     end
 
     def success?

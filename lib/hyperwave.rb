@@ -1,12 +1,10 @@
-require "net/ssh"
-require "yaml"
-
 require "hyperwave/version"
 require "hyperwave/run"
 
 module Hyperwave
+  extend(self)
 
-  def self.each_host(hosts, &block)
+  def each_host(hosts, &block)
     Run.new(hosts, &block).call
   end
 
