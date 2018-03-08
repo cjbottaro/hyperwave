@@ -47,9 +47,12 @@ module Hyperwave
     def wait
       @lock.synchronize do
         @wait_count += 1
-        @wait_count = 0 if @wait_count == hosts.size
-        @cond.broadcast
-        @cond.wait(@lock) while @wait_count > 0
+        if @wait_count == hosts.size
+          @wait_count = 0
+          @cond.broadcast
+        else
+          @cond.wait(@lock)
+        end
       end
     end
 

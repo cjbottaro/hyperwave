@@ -5,7 +5,7 @@ require "hyperwave/plugin"
 module Hyperwave::Plugin::File
 
   def self.file(host, options = {})
-    host.run_toplevel_command("file", options) do |options|
+    host.run_top_level_command("file", options) do |options|
       dst = options[:dst]
       src = options[:src]
       data = open(src).read

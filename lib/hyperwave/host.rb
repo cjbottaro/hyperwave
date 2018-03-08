@@ -33,7 +33,7 @@ module Hyperwave
       change: true
     }
 
-    def run_toplevel_command(name, options, &block)
+    def run_top_level_command(name, options, &block)
       options = DEFAULT_COMMAND_OPTIONS.merge(options)
 
       start_top_level_command do
@@ -134,7 +134,19 @@ module Hyperwave
         else
           result.success?
         end
+      when Array
+        handle_complex_guard(guard, options)
+      else
+        raise ArgumentError, "invalid guard: #{guard.inspect}"
       end
+    end
+
+    def handle_complex_guard(guard, options)
+      cmd, block = guard
+      result = shell(options.merge(cmd: cmd, if: nil, unless: nil))
+      result = block.call(result)
+      result = !result if options[:if]
+      result
     end
 
   end
