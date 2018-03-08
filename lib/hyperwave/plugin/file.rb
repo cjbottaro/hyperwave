@@ -21,7 +21,7 @@ module Hyperwave::Plugin::File
   end
 
   def file(options = {})
-    Plugin::File.file(self, options)
+    Hyperwave::Plugin::File.file(self, options)
   end
 
 end

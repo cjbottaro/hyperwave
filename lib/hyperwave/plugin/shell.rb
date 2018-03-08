@@ -8,8 +8,8 @@ module Hyperwave::Plugin::Shell
       sh  = options[:sh]
       cmd = options[:cmd]
       dir = options[:chdir]
-      cmd = "cd #{dir} && #{cmd}" if dir
       cmd = cmd.gsub("'", "'\\\\''") # I hate life.
+      cmd = "cd #{dir} && #{cmd}" if dir
 
       result = Hyperwave::Result.new
 
@@ -47,7 +47,7 @@ module Hyperwave::Plugin::Shell
   end
 
   def shell(options = {})
-    Plugin::Shell.shell(self, options)
+    Hyperwave::Plugin::Shell.shell(self, options)
   end
 
 end
