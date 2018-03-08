@@ -79,7 +79,7 @@ module Hyperwave
 
     def ensure_clean_ssh_connection
       @ssh = Net::SSH.start(@host, "root") if !@ssh || @ssh.closed?
-      @ssh.channels.each{ |ch| @ssh.cleanup_channl(ch) }
+      @ssh.channels.each{ |ch| @ssh.cleanup_channel(ch) }
     end
 
     def start_top_level_command(&block)

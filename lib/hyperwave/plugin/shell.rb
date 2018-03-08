@@ -38,6 +38,7 @@ module Hyperwave::Plugin::Shell
       end
 
       channel.wait
+      host.ssh.cleanup_channel(channel) # wait probably does this already.
 
       result.stdout.chomp!
       result.stderr.chomp!
