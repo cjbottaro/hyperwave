@@ -5,7 +5,7 @@ require "hyperwave/plugin"
 module Hyperwave::Plugin::File
 
   def self.file(host, options = {})
-    host.run_standard_command("file", options) do |options|
+    host.run_toplevel_command("file", options) do |options|
       dst = options[:dst]
       src = options[:src]
       data = open(src).read
@@ -13,9 +13,9 @@ module Hyperwave::Plugin::File
       begin
         host.ssh.scp.upload!(StringIO.new(data), dst)
       rescue StandardError => e
-        Result.new(error: "#{e.class}: #{e.message}")
+        Hyperwave::Result.new(error: "#{e.class}: #{e.message}")
       else
-        Result.new
+        Hyperwave::Result.new
       end
     end
   end

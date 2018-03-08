@@ -18,5 +18,13 @@ module Hyperwave
       !success?
     end
 
+    def error
+      if success?
+        nil
+      else
+        @error || stderr
+      end
+    end
+
   end
 end

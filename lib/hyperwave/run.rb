@@ -15,7 +15,7 @@ module Hyperwave
       @cond = ConditionVariable.new
 
       # Yeah, I'm using the same lock for both resources. I don't care.
-      # I don't think it's a correctness issue (no deadlocks), and the
+      # I don't think there is a correctness issue (no deadlocks), and the
       # performance hit is negligable.
 
       @wait_count = 0

@@ -33,7 +33,7 @@ module Hyperwave
       change: true
     }
 
-    def run_standard_command(name, options, &block)
+    def run_toplevel_command(name, options, &block)
       options = DEFAULT_COMMAND_OPTIONS.merge(options)
 
       start_top_level_command do
@@ -47,7 +47,7 @@ module Hyperwave
         result = block.call(options)
 
         if result.failure?
-          report(:error, result.stderr)
+          report(:error, result.error)
         elsif options[:change]
           report(:changed)
         else
@@ -105,7 +105,7 @@ module Hyperwave
       when :ok
         ColorizedString.new("ok").green
       when :changed
-        ColorizedString.new("ok").yellow
+        ColorizedString.new("change").yellow
       when :error
         ColorizedString.new("error").red
       end

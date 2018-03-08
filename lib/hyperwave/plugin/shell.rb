@@ -4,7 +4,7 @@ require "hyperwave/plugin"
 module Hyperwave::Plugin::Shell
 
   def self.shell(host, options = {})
-    host.run_standard_command("shell", options) do |options|
+    host.run_toplevel_command("shell", options) do |options|
       sh  = options[:sh]
       cmd = options[:cmd]
       dir = options[:chdir]
