@@ -9,6 +9,7 @@ module Hyperwave::Plugin::Shell
       cmd = options[:cmd]
       dir = options[:chdir]
       cmd = cmd.gsub("'", "'\\\\''") # I hate life.
+      cmd = cmd.gsub(/\s+/, " ") # Simplify whitespace and ditch newlines.
       cmd = "cd #{dir} && #{cmd}" if dir
 
       result = Hyperwave::Result.new
